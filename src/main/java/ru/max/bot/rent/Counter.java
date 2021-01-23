@@ -1,6 +1,8 @@
 package ru.max.bot.rent;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -11,6 +13,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @email maksim.stsiapanau@gmail.com
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Counter {
 
     private Double rate;
@@ -22,9 +26,6 @@ public class Counter {
         this.rate = rate;
         this.used = used;
         this.price = price;
-    }
-
-    public Counter() {
     }
 
 

@@ -15,6 +15,4 @@ public class ResponseHolder {
     private boolean needReplyMarkup;
     private String replyMarkup;
     private String chatId;
-
-
 }

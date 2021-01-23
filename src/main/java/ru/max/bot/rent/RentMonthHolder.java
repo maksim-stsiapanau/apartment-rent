@@ -1,6 +1,7 @@
 package ru.max.bot.rent;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -8,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Data
+@NoArgsConstructor
 public class RentMonthHolder {
 
     private Map<String, Counter> light;
@@ -26,9 +28,6 @@ public class RentMonthHolder {
     public RentMonthHolder(String chatId, String owner) {
         this.chatId = chatId;
         this.owner = owner;
-    }
-
-    public RentMonthHolder() {
     }
 
     public Map<String, Counter> getLight() {

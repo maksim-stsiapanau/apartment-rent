@@ -11,6 +11,4 @@ public class RatesHolder {
 
     private PrimaryLightHolder light;
     private PrimaryWaterHolder water;
-
-
 }

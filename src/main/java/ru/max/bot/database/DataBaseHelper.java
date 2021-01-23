@@ -865,7 +865,7 @@ public class DataBaseHelper {
     }
 
     public long getDocsCount(String collection, String idChat) {
-        return this.mongoTemplate.getDb().getCollection(collection).count(
+        return this.mongoTemplate.getDb().getCollection(collection).countDocuments(
                 Filters.eq("id_chat", idChat));
     }
 }

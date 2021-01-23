@@ -1,0 +1,6 @@
+spring:
+  data:
+    mongodb:
+      database: apartment_rent_bot
+telegram:
+  url: https://api.telegram.org/bot

@@ -2,15 +2,17 @@ package ru.max.bot.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import ru.max.bot.database.DataBaseHelper;
 
 @Configuration
-@EnableScheduling
 @Slf4j
 public class BotConfig {
+
+    @Value("${telegram.url}")
+    private String telegramUrl;
 
     @Bean
     public ObjectMapper objectMapper() {
@@ -22,7 +24,7 @@ public class BotConfig {
         StringBuilder sb = new StringBuilder();
 
         dataBaseHelper.getToken().ifPresent(e -> {
-            sb.append("https://api.telegram.org/bot").append(e).append("/");
+            sb.append(this.telegramUrl).append(e).append("/");
         });
 
         String telegramApiUrl = sb.toString();

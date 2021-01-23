@@ -1,6 +1,8 @@
 package ru.max.bot.rent;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Hold information about counter of water
@@ -9,6 +11,8 @@ import lombok.Data;
  * @email maksim.stsiapanau@gmail.com
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class WaterHolder {
 
     private String typeOfWater;
@@ -18,12 +22,5 @@ public class WaterHolder {
     public WaterHolder(String typeOfWater) {
         this.typeOfWater = typeOfWater;
         this.alias = typeOfWater;
-
     }
-
-
-    public WaterHolder() {
-    }
-
-
 }

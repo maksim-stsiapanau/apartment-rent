@@ -104,10 +104,10 @@ public class BotHelper {
 
     public static Optional<String> callApiGet(String method, String url) {
 
-        if (url.contains("api.telegram.org")) {
-            url = url.replace("https://api.telegram.org",
-                    "http://62.76.177.30");
-        }
+//        if (url.contains("api.telegram.org")) {
+//            url = url.replace("https://api.telegram.org",
+//                    "http://62.76.177.30");
+//        }
         Optional<String> result = Optional.empty();
         BufferedReader in = null;
         URL obj;
