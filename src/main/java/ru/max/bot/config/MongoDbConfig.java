@@ -13,9 +13,12 @@ public class MongoDbConfig {
     @Value("${spring.data.mongodb.database}")
     private String database;
 
+    @Value("${spring.data.mongodb.host}")
+    private String host;
+
     @Bean
     public MongoClient mongoClient() {
-        return MongoClients.create();
+        return MongoClients.create(this.host);
     }
 
     @Bean
