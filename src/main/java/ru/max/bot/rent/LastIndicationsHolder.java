@@ -1,6 +1,7 @@
 package ru.max.bot.rent;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,16 +18,12 @@ import java.util.stream.Collectors;
  * @email maksim.stsiapanau@gmail.com
  */
 @Data
+@NoArgsConstructor
 public class LastIndicationsHolder {
 
     private Map<String, Double> light;
     private Map<Integer, WaterHolder> hotWater;
     private Map<Integer, WaterHolder> coldWater;
-
-    public LastIndicationsHolder() {
-
-    }
-
 
     public <T, V> Map<T, V> copyMap(Map<T, V> map) {
         return map

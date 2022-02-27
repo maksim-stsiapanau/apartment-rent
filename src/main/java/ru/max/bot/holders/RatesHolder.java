@@ -8,7 +8,6 @@ import ru.max.bot.rent.PrimaryWaterHolder;
 @Data
 @AllArgsConstructor
 public class RatesHolder {
-
     private PrimaryLightHolder light;
     private PrimaryWaterHolder water;
 }

@@ -39,7 +39,8 @@ public class RentHolder {
     // need if user decides change indicators
     private Map<String, Integer> addedWater;
 
-    public RentHolder(ObjectMapper objectMapper, DataBaseHelper dataBaseHelper, String chatId, String owner) {
+    public RentHolder(ObjectMapper objectMapper,
+                      DataBaseHelper dataBaseHelper, String chatId, String owner) {
         this.objectMapper = objectMapper;
         this.dataBaseHelper = dataBaseHelper;
         this.chatId = chatId;
@@ -90,78 +91,72 @@ public class RentHolder {
             lastInds.setColdWater(this.currentColdWaterIndications);
 
             this.currentColdWaterIndications
-                    .entrySet()
-                    .forEach(
-                            e -> {
-                                Integer key = e.getKey();
-                                String alias = e.getValue().getAlias();
-                                Double rate = this.waterPrimary
-                                        .getColdWaterRate();
+                    .forEach((key, value) -> {
+                        String alias = value.getAlias();
+                        Double rate = this.waterPrimary
+                                .getColdWaterRate();
 
-                                Integer lastKey = null;
+                        Integer lastKey = null;
 
-                                if (null != alias) {
-                                    for (Entry<Integer, WaterHolder> entry : this.lastIndications
-                                            .getColdWater().entrySet()) {
-                                        Integer keyEntry = entry.getKey();
-                                        if (entry.getValue().getAlias()
-                                                .equalsIgnoreCase(alias)) {
-                                            lastKey = keyEntry;
-                                        }
-                                    }
+                        if (null != alias) {
+                            for (Entry<Integer, WaterHolder> entry : this.lastIndications
+                                    .getColdWater().entrySet()) {
+                                Integer keyEntry = entry.getKey();
+                                if (entry.getValue().getAlias()
+                                        .equalsIgnoreCase(alias)) {
+                                    lastKey = keyEntry;
                                 }
+                            }
+                        }
 
-                                Double used = e.getValue()
-                                        .getPrimaryIndication()
-                                        - this.lastIndications
-                                        .getColdWater()
-                                        .get((lastKey == null) ? key
-                                                : lastKey)
-                                        .getPrimaryIndication();
-                                Double price = used * rate;
+                        Double used = value
+                                .getPrimaryIndication()
+                                - this.lastIndications
+                                .getColdWater()
+                                .get((lastKey == null) ? key
+                                        : lastKey)
+                                .getPrimaryIndication();
+                        Double price = used * rate;
 
-                                Counter counter = new Counter(rate, used, price);
-                                counter.setAlias(alias);
-                                totalObj.getColdWater().put(key, counter);
-                            });
+                        Counter counter = new Counter(rate, used, price);
+                        counter.setAlias(alias);
+                        totalObj.getColdWater().put(key, counter);
+                    });
 
             lastInds.setHotWater(this.currentHotWaterIndications);
 
             this.currentHotWaterIndications
-                    .entrySet()
-                    .forEach(
-                            e -> {
-                                Integer key = e.getKey();
-                                String alias = e.getValue().getAlias();
-                                Double rate = this.waterPrimary
-                                        .getHotWaterRate();
+                    .forEach((key, value) -> {
+                        String alias = value.getAlias();
+                        Double rate = this.waterPrimary
+                                .getHotWaterRate();
 
-                                Integer lastKey = null;
+                        Integer lastKey = null;
 
-                                if (null != alias) {
-                                    for (Entry<Integer, WaterHolder> entry : this.lastIndications
-                                            .getHotWater().entrySet()) {
-                                        Integer keyEntry = entry.getKey();
-                                        if (entry.getValue().getAlias()
-                                                .equalsIgnoreCase(alias)) {
-                                            lastKey = keyEntry;
-                                        }
-                                    }
+                        if (null != alias) {
+                            for (Entry<Integer, WaterHolder> entry : this.lastIndications
+                                    .getHotWater().entrySet()) {
+                                Integer keyEntry = entry.getKey();
+                                if (entry.getValue().getAlias()
+                                        .equalsIgnoreCase(alias)) {
+                                    lastKey = keyEntry;
                                 }
+                            }
+                        }
 
-                                Double used = e.getValue()
-                                        .getPrimaryIndication()
-                                        - this.lastIndications
-                                        .getHotWater()
-                                        .get((lastKey == null) ? key
-                                                : lastKey)
-                                        .getPrimaryIndication();
-                                Double price = used * rate;
+                        Double used = value
+                                .getPrimaryIndication()
+                                - this.lastIndications
+                                .getHotWater()
+                                .get((lastKey == null) ? key
+                                        : lastKey)
+                                .getPrimaryIndication();
+                        Double price = used * rate;
 
-                                Counter counter = new Counter(rate, used, price);
-                                counter.setAlias(alias);
-                                totalObj.getHotWater().put(key, counter);
-                            });
+                        Counter counter = new Counter(rate, used, price);
+                        counter.setAlias(alias);
+                        totalObj.getHotWater().put(key, counter);
+                    });
 
             if (needOutfall) {
                 Double outfallCount = 0.0;
@@ -207,14 +202,7 @@ public class RentHolder {
 
             // save month statistic to database
             ExecutorService es = Executors.newSingleThreadExecutor();
-            es.execute(new Runnable() {
-
-                @Override
-                public void run() {
-                    dataBaseHelper.insertMonthStat(totalObj);
-
-                }
-            });
+            es.execute(() -> dataBaseHelper.insertMonthStat(totalObj));
             es.shutdown();
 
         }

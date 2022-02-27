@@ -12,8 +12,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class CommandHolder {
-
     private final String command;
     private final boolean rusLang;
-
 }

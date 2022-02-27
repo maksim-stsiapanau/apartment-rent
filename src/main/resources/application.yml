@@ -2,6 +2,6 @@ spring:
   data:
     mongodb:
       database: apartment_rent_bot
-      host: mongodb://host.docker.internal
+      host: mongodb://localhost:27017 #host.docker.internal
 telegram:
   url: https://api.telegram.org/bot

@@ -2,6 +2,7 @@ package ru.max.bot.rent;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -14,6 +15,7 @@ import java.util.TreeMap;
  */
 @Data
 @JsonIgnoreProperties({"setRates", "setIndications"})
+@NoArgsConstructor
 public class PrimaryLightHolder {
 
     private Integer tariffType;
@@ -28,11 +30,6 @@ public class PrimaryLightHolder {
      * key - name value - tariff price
      */
     private Map<String, Double> rates;
-
-    public PrimaryLightHolder() {
-
-    }
-
 
     public boolean isSetIndications() {
         return this.indications.size() == this.tariffType;
@@ -53,7 +50,7 @@ public class PrimaryLightHolder {
         DAY, NIGHT, PEAK, HALF_PEAK
     }
 
-    public static enum PeriodsRus {
+    public enum PeriodsRus {
         ДЕНЬ, НОЧЬ, ПИК, ПОЛУПИК
     }
 }

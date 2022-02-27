@@ -55,17 +55,11 @@ public class RentMonthHolder {
     public Double getTotalAmount() {
         this.totalAmount = 0.0;
 
-        this.light.entrySet().forEach(e -> {
-            this.totalAmount += e.getValue().getPrice();
-        });
+        this.light.forEach((key, value) -> this.totalAmount += value.getPrice());
 
-        this.coldWater.entrySet().forEach(e -> {
-            this.totalAmount += e.getValue().getPrice();
-        });
+        this.coldWater.forEach((key, value) -> this.totalAmount += value.getPrice());
 
-        this.hotWater.entrySet().forEach(e -> {
-            this.totalAmount += e.getValue().getPrice();
-        });
+        this.hotWater.forEach((key, value) -> this.totalAmount += value.getPrice());
 
         if (null != this.outfall) {
             this.totalAmount += this.outfall.getPrice();

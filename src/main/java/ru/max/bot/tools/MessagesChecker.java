@@ -78,28 +78,21 @@ public class MessagesChecker {
 
                                                         sb.append(
                                                                 "sendMessage?chat_id=")
-                                                                .append(e
-                                                                        .getChatId())
+                                                                .append(e.getChatId())
                                                                 .append("&parse_mode=HTML&text=")
                                                                 .append(URLEncoder
-                                                                        .encode(e
-                                                                                        .getResponseMessage(),
+                                                                        .encode(e.getResponseMessage(),
                                                                                 StandardCharsets.UTF_8));
                                                         if (e.isNeedReplyMarkup()) {
                                                             sb.append(
                                                                     "&reply_markup=")
-                                                                    .append(e
-                                                                            .getReplyMarkup());
+                                                                    .append(e.getReplyMarkup());
                                                         }
 
-                                                        callApiGet(
-                                                                sb.toString(),
+                                                        callApiGet(sb.toString(),
                                                                 this.telegramApiUrl);
                                                     } catch (Exception e1) {
-
-                                                        log.error(
-                                                                e1.getMessage(),
-                                                                e1);
+                                                        log.error(e1.getMessage(), e1);
                                                     }
 
                                                 });
@@ -247,28 +240,59 @@ public class MessagesChecker {
                                                             rentHolder.getLight().put(key, c);
                                                         });
 
-                                                        rentHolder.getColdWater().forEach((key, value) -> {
-                                                            Counter c = value.recalcCounter(rates.getWater().getColdWaterRate());
-                                                            rentHolder.getColdWater().put(key, c);
+                                                        rentHolder.getColdWater().forEach((key, prevCounter) -> {
+                                                            if (prevCounter.getUsed() < 0) {
+                                                                prevCounter.setUsed(rentHolder.getLastIndications()
+                                                                        .getColdWater().get(1).getPrimaryIndication());
+                                                            }
+                                                            Counter recalcCounter = prevCounter.recalcCounter(rates.getWater()
+                                                                    .getColdWaterRate());
+                                                            rentHolder.getColdWater().put(key, recalcCounter);
                                                         });
 
-                                                        rentHolder.getHotWater().forEach((key, value) -> {
-                                                            Counter c = value.recalcCounter(rates.getWater().getHotWaterRate());
-                                                            rentHolder.getHotWater().put(key, c);
+                                                        rentHolder.getHotWater().forEach((key, prevCounter) -> {
+                                                            if (prevCounter.getUsed() < 0) {
+                                                                prevCounter.setUsed(rentHolder.getLastIndications()
+                                                                        .getHotWater().get(1).getPrimaryIndication());
+                                                            }
+                                                            Counter recalcCounter = prevCounter.recalcCounter(rates.getWater()
+                                                                    .getHotWaterRate());
+                                                            rentHolder.getHotWater().put(key, recalcCounter);
                                                         });
 
-                                                        Counter c = rentHolder.getOutfall().recalcCounter(rates.getWater().getOutfallRate());
-                                                        rentHolder.setOutfall(c);
 
-                                                        sb.append("======================").append(dataBaseHelper.getStatisticByMonth(rentHolder, isRus)).append("\n\n");
+                                                        Counter prevOutfall = rentHolder.getOutfall();
+
+                                                        if (prevOutfall.getUsed() < 0) {
+                                                            Double outfallCount = 0.0;
+                                                            for (Entry<Integer, Counter> entry : rentHolder.getColdWater()
+                                                                    .entrySet()) {
+                                                                outfallCount += entry.getValue().getUsed();
+                                                            }
+
+                                                            for (Entry<Integer, Counter> entry : rentHolder.getHotWater()
+                                                                    .entrySet()) {
+                                                                outfallCount += entry.getValue().getUsed();
+                                                            }
+                                                            prevOutfall.setUsed(outfallCount);
+                                                        }
+                                                        Counter recalcOutfall = prevOutfall.recalcCounter(rates.getWater()
+                                                                .getOutfallRate());
+                                                        rentHolder.setOutfall(recalcOutfall);
+
+                                                        sb.append("======================").append(dataBaseHelper
+                                                                .getStatisticByMonth(rentHolder, isRus)).append("\n\n");
 
                                                         Double totalAfter = rentHolder.getTotalAmount();
 
+                                                        double diff = totalBefore - totalAfter;
+                                                        if (diff < 0) {
+                                                            diff = totalAfter;
+                                                        }
                                                         sb.append((isRus) ? "<b>Разница:</b> " : "<b>Difference:</b> ")
-                                                                .append(String.format("%.2f", (totalBefore - totalAfter))).append((isRus) ? " руб" : " rub");
+                                                                .append(String.format("%.2f", diff)).append((isRus) ? " руб" : " rub");
 
                                                     }
-
                                                     answer = sb.toString();
                                                     //get rates and and apply to rentHolder
                                                 } catch (Exception e) {

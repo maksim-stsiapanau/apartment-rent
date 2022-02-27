@@ -10,7 +10,6 @@ import lombok.Data;
  */
 @Data
 public class ResponseHolder {
-
     private String responseMessage;
     private boolean needReplyMarkup;
     private String replyMarkup;

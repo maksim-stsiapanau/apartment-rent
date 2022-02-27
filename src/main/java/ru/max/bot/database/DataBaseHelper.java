@@ -69,8 +69,6 @@ public class DataBaseHelper {
     }
 
     public RatesHolder getRatesForRecalc(String chatId, ObjectMapper mapper) {
-
-
         try {
             Optional<Document> document = Optional.ofNullable(this.mongoTemplate.getDb()
                     .getCollection("rent_const")
@@ -214,30 +212,22 @@ public class DataBaseHelper {
 
         rentHolder
                 .getLight()
-                .entrySet()
-                .forEach(
-                        e -> {
-                            sb.append("<b>").append(e.getKey()).append("</b>")
-                                    .append((isRus) ? " - показание: "
-                                            : " - indication: ")
-                                    .append(String.format("%.2f",
-                                            lightLast.get(e
-                                                    .getKey())))
-                                    .append((isRus) ? "; использовано: "
-                                            : "; used: ")
-                                    .append(String.format("%.2f", e
-                                            .getValue().getUsed()))
-                                    .append((isRus) ? "; стоимость: "
-                                            : "; price: ")
-                                    .append(String.format("%.2f", e
-                                            .getValue().getPrice()))
-                                    .append((isRus) ? " руб; тариф: "
-                                            : " rub; rate: ")
-                                    .append(String.format("%.2f", e
-                                            .getValue().getRate()))
-                                    .append((isRus) ? " руб"
-                                            : " rub").append("\n");
-                        });
+                .forEach((key, value) -> sb.append("<b>").append(key).append("</b>")
+                        .append((isRus) ? " - показание: "
+                                : " - indication: ")
+                        .append(String.format("%.2f",
+                                lightLast.get(key)))
+                        .append((isRus) ? "; использовано: "
+                                : "; used: ")
+                        .append(String.format("%.2f", value.getUsed()))
+                        .append((isRus) ? "; стоимость: "
+                                : "; price: ")
+                        .append(String.format("%.2f", value.getPrice()))
+                        .append((isRus) ? " руб; тариф: "
+                                : " rub; rate: ")
+                        .append(String.format("%.2f", value.getRate()))
+                        .append((isRus) ? " руб"
+                                : " rub").append("\n"));
 
         if (rentHolder.getLight().size() > 0) {
             Double totalLigDoublePrice = rentHolder.getLight().values().stream().map(Counter::getPrice).reduce(0.0, Double::sum);
@@ -254,73 +244,63 @@ public class DataBaseHelper {
                     : "\n<b>Cold water</b>");
             rentHolder
                     .getColdWater()
-                    .entrySet()
-                    .forEach(
-                            e -> {
+                    .forEach((key, value) -> {
 
-                                sb.append("\n");
-                                Optional<String> alias = Optional
-                                        .ofNullable(e.getValue()
-                                                .getAlias());
+                        sb.append("\n");
+                        Optional<String> alias = Optional
+                                .ofNullable(value
+                                        .getAlias());
 
-                                Double lastIndication = null;
-                                int size = lastData.getColdWater()
-                                        .size();
-                                if (size == 1) {
-                                    lastIndication = lastData
-                                            .getColdWater().get(1)
+                        Double lastIndication = null;
+                        int size = lastData.getColdWater()
+                                .size();
+                        if (size == 1) {
+                            lastIndication = lastData
+                                    .getColdWater().get(1)
+                                    .getPrimaryIndication();
+                        } else {
+                            for (Entry<Integer, WaterHolder> entry : lastData
+                                    .getColdWater()
+                                    .entrySet()) {
+
+                                WaterHolder wh = entry
+                                        .getValue();
+
+                                if (alias.get().equals(
+                                        wh.getAlias())) {
+                                    lastIndication = wh
                                             .getPrimaryIndication();
-                                } else {
-                                    for (Entry<Integer, WaterHolder> entry : lastData
-                                            .getColdWater()
-                                            .entrySet()) {
-
-                                        WaterHolder wh = entry
-                                                .getValue();
-
-                                        if (alias.get().equals(
-                                                wh.getAlias())) {
-                                            lastIndication = wh
-                                                    .getPrimaryIndication();
-                                        }
-                                    }
                                 }
+                            }
+                        }
 
-                                if (alias.isPresent()) {
-                                    sb.append(
-                                            "<b>" + alias.get()
-                                                    + "</b>")
-                                            .append(" - ");
+                        alias.ifPresent(s -> sb.append("<b>").append(s).append("</b>")
+                                .append(" - "));
 
-                                }
-
-                                sb.append(
-                                        (isRus) ? "показание: "
-                                                : "indication: ")
-                                        .append(String.format(
-                                                "%.2f",
-                                                lastIndication))
-                                        .append((isRus) ? "; использовано: "
-                                                : "; used: ")
-                                        .append(String.format(
-                                                "%.2f", e
-                                                        .getValue()
-                                                        .getUsed()))
-                                        .append((isRus) ? "; стоимость: "
-                                                : "; price: ")
-                                        .append(String
-                                                .format("%.2f", e
-                                                        .getValue()
-                                                        .getPrice()))
-                                        .append((isRus) ? " руб; тариф: "
-                                                : " rub; rate: ")
-                                        .append(String.format(
-                                                "%.2f", e
-                                                        .getValue()
-                                                        .getRate()))
-                                        .append((isRus) ? " руб"
-                                                : " rub");
-                            });
+                        sb.append(
+                                (isRus) ? "показание: "
+                                        : "indication: ")
+                                .append(String.format(
+                                        "%.2f",
+                                        lastIndication))
+                                .append((isRus) ? "; использовано: "
+                                        : "; used: ")
+                                .append(String.format(
+                                        "%.2f", value
+                                                .getUsed()))
+                                .append((isRus) ? "; стоимость: "
+                                        : "; price: ")
+                                .append(String
+                                        .format("%.2f", value
+                                                .getPrice()))
+                                .append((isRus) ? " руб; тариф: "
+                                        : " rub; rate: ")
+                                .append(String.format(
+                                        "%.2f", value
+                                                .getRate()))
+                                .append((isRus) ? " руб"
+                                        : " rub");
+                    });
         }
 
         if (sizeHotWater > 0) {
@@ -328,70 +308,65 @@ public class DataBaseHelper {
                     : "\n\n<b>Hot water</b>");
             rentHolder
                     .getHotWater()
-                    .entrySet()
-                    .forEach(
-                            e -> {
-                                sb.append("\n");
-                                Optional<String> alias = Optional
-                                        .ofNullable(e.getValue()
-                                                .getAlias());
+                    .forEach((key, value) -> {
+                        sb.append("\n");
+                        Optional<String> alias = Optional
+                                .ofNullable(value
+                                        .getAlias());
 
-                                if (alias.isPresent()) {
-                                    sb.append(
-                                            "<b>" + alias.get()
-                                                    + "</b>")
-                                            .append(" - ");
-                                }
+                        if (alias.isPresent()) {
+                            sb.append(
+                                    "<b>" + alias.get()
+                                            + "</b>")
+                                    .append(" - ");
+                        }
 
-                                Double lastIndication = null;
-                                int size = lastData.getHotWater()
-                                        .size();
-                                if (size == 1) {
-                                    lastIndication = lastData
-                                            .getHotWater().get(1)
+                        Double lastIndication = null;
+                        int size = lastData.getHotWater()
+                                .size();
+                        if (size == 1) {
+                            lastIndication = lastData
+                                    .getHotWater().get(1)
+                                    .getPrimaryIndication();
+                        } else {
+                            for (Entry<Integer, WaterHolder> entry : lastData
+                                    .getHotWater()
+                                    .entrySet()) {
+
+                                WaterHolder wh = entry
+                                        .getValue();
+
+                                if (alias.get().equals(
+                                        wh.getAlias())) {
+                                    lastIndication = wh
                                             .getPrimaryIndication();
-                                } else {
-                                    for (Entry<Integer, WaterHolder> entry : lastData
-                                            .getHotWater()
-                                            .entrySet()) {
-
-                                        WaterHolder wh = entry
-                                                .getValue();
-
-                                        if (alias.get().equals(
-                                                wh.getAlias())) {
-                                            lastIndication = wh
-                                                    .getPrimaryIndication();
-                                        }
-                                    }
                                 }
-                                sb.append(
-                                        (isRus) ? "показание: "
-                                                : "indication: ")
-                                        .append(String.format(
-                                                "%.2f",
-                                                lastIndication))
-                                        .append((isRus) ? "; использовано: "
-                                                : "; used: ")
-                                        .append(String.format(
-                                                "%.2f", e
-                                                        .getValue()
-                                                        .getUsed()))
-                                        .append((isRus) ? "; стоимость: "
-                                                : "; price: ")
-                                        .append(String
-                                                .format("%.2f", e
-                                                        .getValue()
-                                                        .getPrice()))
-                                        .append((isRus) ? " руб; тариф: "
-                                                : " rub; rate: ")
-                                        .append(String.format(
-                                                "%.2f", e
-                                                        .getValue()
-                                                        .getRate()))
-                                        .append((isRus) ? " руб"
-                                                : " rub");
-                            });
+                            }
+                        }
+                        sb.append(
+                                (isRus) ? "показание: "
+                                        : "indication: ")
+                                .append(String.format(
+                                        "%.2f",
+                                        lastIndication))
+                                .append((isRus) ? "; использовано: "
+                                        : "; used: ")
+                                .append(String.format(
+                                        "%.2f", value
+                                                .getUsed()))
+                                .append((isRus) ? "; стоимость: "
+                                        : "; price: ")
+                                .append(String
+                                        .format("%.2f", value
+                                                .getPrice()))
+                                .append((isRus) ? " руб; тариф: "
+                                        : " rub; rate: ")
+                                .append(String.format(
+                                        "%.2f", value
+                                                .getRate()))
+                                .append((isRus) ? " руб"
+                                        : " rub");
+                    });
 
         }
 
@@ -529,15 +504,16 @@ public class DataBaseHelper {
                     log.debug("Last record detected!");
 
                     try {
+                        assert lastRecord != null;
                         RentMonthHolder rent = objectMapper.readValue(
                                 (String) lastRecord.get("stat"),
                                 RentMonthHolder.class);
 
                         this.mongoTemplate.getDb().getCollection("rent_const")
                                 .updateOne(
-                                        this.mongoTemplate.getDb().getCollection("rent_const")
+                                        Objects.requireNonNull(this.mongoTemplate.getDb().getCollection("rent_const")
                                                 .find(Filters.eq("id_chat",
-                                                        idChat)).first(),
+                                                        idChat)).first()),
                                         new Document(
                                                 "$set",
                                                 new Document(
@@ -601,8 +577,8 @@ public class DataBaseHelper {
 
         try {
             this.mongoTemplate.getDb().getCollection(collection).updateOne(
-                    this.mongoTemplate.getDb().getCollection(collection)
-                            .find(Filters.eq("id_chat", idChat)).first(),
+                    Objects.requireNonNull(this.mongoTemplate.getDb().getCollection(collection)
+                            .find(Filters.eq("id_chat", idChat)).first()),
                     new Document("$set", new Document(field, value)));
         } catch (Exception e) {
             status = false;
@@ -631,8 +607,8 @@ public class DataBaseHelper {
                     .find(Filters.eq("id_chat", idChat)).first());
             if (primaries.isPresent()) {
                 this.mongoTemplate.getDb().getCollection("rent_const").updateOne(
-                        this.mongoTemplate.getDb().getCollection("rent_const")
-                                .find(Filters.eq("id_chat", idChat)).first(),
+                        Objects.requireNonNull(this.mongoTemplate.getDb().getCollection("rent_const")
+                                .find(Filters.eq("id_chat", idChat)).first()),
                         new Document("$set", new Document(field, obj)));
 
                 primarySet = primaries.get().get("light") != null
@@ -666,9 +642,9 @@ public class DataBaseHelper {
 
                     this.mongoTemplate.getDb().getCollection("rent_const")
                             .updateOne(
-                                    this.mongoTemplate.getCollection("rent_const")
+                                    Objects.requireNonNull(this.mongoTemplate.getCollection("rent_const")
                                             .find(Filters.eq("id_chat", idChat))
-                                            .first(),
+                                            .first()),
                                     new Document(
                                             "$set",
                                             new Document(
@@ -725,9 +701,9 @@ public class DataBaseHelper {
         // update last indications
         try {
             this.mongoTemplate.getDb().getCollection("rent_const").updateOne(
-                    this.mongoTemplate.getDb().getCollection("rent_const")
+                    Objects.requireNonNull(this.mongoTemplate.getDb().getCollection("rent_const")
                             .find(Filters.eq("id_chat", total.getChatId()))
-                            .first(),
+                            .first()),
                     new Document("$set", new Document("last_indications",
                             objectMapper.writeValueAsString(total
                                     .getLastIndications()))));
@@ -819,9 +795,9 @@ public class DataBaseHelper {
 
                         this.mongoTemplate.getDb().getCollection("rent_const")
                                 .updateOne(
-                                        this.mongoTemplate.getDb().getCollection("rent_const")
+                                        Objects.requireNonNull(this.mongoTemplate.getDb().getCollection("rent_const")
                                                 .find(Filters.eq("id_chat",
-                                                        chatId)).first(),
+                                                        chatId)).first()),
                                         new Document(
                                                 "$set",
                                                 new Document(

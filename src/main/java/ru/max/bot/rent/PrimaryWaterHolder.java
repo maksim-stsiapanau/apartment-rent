@@ -2,6 +2,7 @@ package ru.max.bot.rent;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -16,6 +17,7 @@ import java.util.TreeMap;
 @Data
 @JsonIgnoreProperties({"typeOfWater", "typeOfRates", "waterSet", "ratesSet",
         "waitValue", "setWaterIndications", "setRates"})
+@NoArgsConstructor
 public class PrimaryWaterHolder {
 
     private Integer countHotWaterCounter;
@@ -31,23 +33,17 @@ public class PrimaryWaterHolder {
     private Map<Integer, WaterHolder> hotWater;
     private Map<Integer, WaterHolder> coldWater;
 
-    public PrimaryWaterHolder() {
-    }
-
-
     public void setHotWater() {
         if (null == this.hotWater) {
             this.hotWater = new TreeMap<>();
         }
     }
 
-
     public void setColdWater() {
         if (null == this.coldWater) {
             this.coldWater = new TreeMap<>();
         }
     }
-
 
     public boolean isSetRates() {
         return this.hotWaterRate != null && this.coldWaterRate != null && this.outfallRate != null;
@@ -58,5 +54,4 @@ public class PrimaryWaterHolder {
                 && this.coldWater.size() == this.countColdWaterCounter && this.hotWater
                 .size() == this.countHotWaterCounter;
     }
-
 }
